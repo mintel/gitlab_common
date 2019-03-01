@@ -29,6 +29,18 @@
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
+.loadtest_template:
+  <<: *tags
+  stage: post_deploy
+  allow_failure: false
+  script:
+    - command loadtest
+  only:
+    - master
+  except:
+    variables:
+      - $LOADTEST_DISABLED
+
 .review_template:
   <<: *tags
   stage: review
@@ -38,6 +50,9 @@
     name: review/$CI_COMMIT_REF_NAME
     url: https://$CI_ENVIRONMENT_SLUG-$KUBE_HOST.$KUBE_DOMAIN
     on_stop: review_stop
+  artifacts:
+    paths: 
+      - ci-vars/vars.txt
   when: manual
   only:
     - branches
@@ -88,6 +103,9 @@
   environment:
     name: production
     url: https://$KUBE_HOST.$KUBE_DOMAIN
+  artifacts:
+    paths: 
+      - ci-vars/vars.txt
   when: manual
   allow_failure: false
   only:

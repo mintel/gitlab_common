@@ -5,6 +5,7 @@ stages:
   - staging
   - production
   - tag_latest
+  - post_deploy
 
 build:
   stage: build
@@ -13,6 +14,10 @@ build:
 container_scan:
   stage: test
   extends: .container_scan_template
+
+loadtest:
+  stage: post_deploy
+  extends: .loadtest_template
 
 review:
   stage: review 
@@ -65,6 +70,18 @@ tag_latest:
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
+.loadtest_template:
+  <<: *tags
+  stage: post_deploy
+  allow_failure: false
+  script:
+    - command loadtest
+  only:
+    - master
+  except:
+    variables:
+      - $LOADTEST_DISABLED
+
 .review_template:
   <<: *tags
   stage: review
@@ -73,6 +90,9 @@ tag_latest:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     on_stop: review_stop
+  artifacts:
+    paths:
+      - ci-vars/vars.txt
   when: manual
   only:
     - branches
@@ -119,6 +139,9 @@ tag_latest:
     - command deploy
   environment:
     name: production
+  artifacts:
+    paths:
+      - ci-vars/vars.txt
   when: manual
   allow_failure: false
   only:
