@@ -130,6 +130,9 @@ tag_latest:
     - command deploy
   environment:
     name: staging
+  artifacts:
+    paths:
+      - ci-vars/vars.txt
   only:
     - master
   except:

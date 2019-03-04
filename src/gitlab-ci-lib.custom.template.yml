@@ -88,6 +88,9 @@
   environment:
     name: staging
     url: https://staging-$KUBE_HOST.$KUBE_DOMAIN
+  artifacts:
+    paths:
+      - ci-vars/vars.txt
   only:
     - master
   except:
