@@ -3,9 +3,10 @@ stages:
   - test
   - review
   - staging
+  - post_staging
   - production
   - tag_latest
-  - post_deploy
+  - post_production
 
 build:
   stage: build
@@ -15,8 +16,12 @@ container_scan:
   stage: test
   extends: .container_scan_template
 
-loadtest:
-  stage: post_deploy
+loadtest_staging:
+  stage: post_staging
+  extends: .loadtest_template
+
+loadtest_production:
+  stage: post_production
   extends: .loadtest_template
 
 review:
@@ -72,7 +77,6 @@ tag_latest:
 
 .loadtest_template:
   <<: *tags
-  stage: post_deploy
   allow_failure: false
   script:
     - command loadtest

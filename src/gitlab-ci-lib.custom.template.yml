@@ -31,7 +31,6 @@
 
 .loadtest_template:
   <<: *tags
-  stage: post_deploy
   allow_failure: false
   script:
     - command loadtest
