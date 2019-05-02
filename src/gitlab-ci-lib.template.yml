@@ -98,7 +98,7 @@ loadtest:
   script:
     - command publish_image staging
   only:
-    - branches
+    - master
   except:
     variables:
       - $TAG_STAGING_DISABLED
