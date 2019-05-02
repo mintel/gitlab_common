@@ -30,9 +30,9 @@ deploy-review:
   stage: deploy
   extends: .review_template
 
-deploy-review-delete:
+stop-review:
   stage: deploy
-  extends: .review_delete_template
+  extends: .review_stop_template
 
 deploy-staging:
   stage: deploy
@@ -137,7 +137,7 @@ loadtest:
     - command deploy review
   environment:
     name: review/$CI_COMMIT_REF_NAME
-    on_stop: deploy-review-delete
+    on_stop: stop-review
   artifacts:
     paths:
       - ci-vars/vars.txt
@@ -150,7 +150,7 @@ loadtest:
     variables:
       - $REVIEW_DISABLED
 
-.review_delete_template:
+.review_stop_template:
   <<: *tags
   stage: deploy
   script:
