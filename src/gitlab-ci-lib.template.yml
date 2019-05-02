@@ -87,6 +87,8 @@ loadtest:
   only:
     - branches
   except:
+    refs:
+      - master
     variables:
       - $TAG_REVIEW_DISABLED
 
@@ -143,6 +145,8 @@ loadtest:
   only:
     - branches
   except:
+    refs:
+      - master
     variables:
       - $REVIEW_DISABLED
 
@@ -158,6 +162,8 @@ loadtest:
   only:
     - branches
   except:
+    refs:
+      - master
     variables:
       - $REVIEW_DISABLED
 
