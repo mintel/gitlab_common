@@ -1,48 +1,50 @@
 stages:
   - build
   - test
-  - review
-  - staging
-  - post_staging
-  - production
-  - tag_latest
-  - post_production
+  - tag-image
+# - pre-deploy
+  - deploy
+  - post-deploy
 
 build:
   stage: build
   extends: .build_template
 
-container_scan:
+tag-review:
+  stage: tag-image
+  extends: .tag_review_template
+
+tag-staging:
+  stage: tag-image
+  extends: .tag_staging_template
+
+tag-production:
+  stage: tag-image
+  extends: .tag_production_template
+
+container-scan:
   stage: test
   extends: .container_scan_template
 
-loadtest_staging:
-  stage: post_staging
-  extends: .loadtest_template
-
-loadtest_production:
-  stage: post_production
-  extends: .loadtest_template
-
-review:
-  stage: review 
+deploy-review:
+  stage: deploy
   extends: .review_template
 
-review_stop:
-  stage: review 
+deploy-review-stop:
+  stage: deploy
   extends: .review_stop_template
 
-staging:
-  stage: staging
+deploy-staging:
+  stage: deploy
   extends: .staging_template
 
-production:
-  stage: production
+deploy-production:
+  stage: deploy
   extends: .production_template
 
-tag_latest:
-  stage: tag_latest 
-  extends: .tag_latest_template
+loadtest:
+  stage: post-deploy
+  extends: .loadtest_template
 
 .common:
   tags_template: &tags
@@ -75,6 +77,45 @@ tag_latest:
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
+.tag_review_template:
+  <<: *tags
+  <<: *docker
+  stage: tag-image
+  allow_failure: false
+  script:
+    - command publish_image review
+  only:
+    - branches
+  except:
+    variables:
+      - $TAG_REVIEW_DISABLED
+
+.tag_staging_template:
+  <<: *tags
+  <<: *docker
+  stage: tag-image
+  allow_failure: false
+  script:
+    - command publish_image staging
+  only:
+    - branches
+  except:
+    variables:
+      - $TAG_STAGING_DISABLED
+
+.tag_production_template:
+  <<: *tags
+  <<: *docker
+  stage: tag-image
+  allow_failure: false
+  script:
+    - command publish_image production
+  only:
+    - tags
+  except:
+    variables:
+      - $TAG_PRODUCTION_DISABLED
+
 .loadtest_template:
   <<: *tags
   allow_failure: false
@@ -82,6 +123,7 @@ tag_latest:
     - command loadtest
   only:
     - master
+    - tags
   except:
     variables:
       - $LOADTEST_DISABLED
@@ -90,7 +132,7 @@ tag_latest:
   <<: *tags
   stage: review
   script:
-    - command deploy
+    - command deploy review
   environment:
     name: review/$CI_COMMIT_REF_NAME
     on_stop: review_stop
@@ -101,8 +143,6 @@ tag_latest:
   only:
     - branches
   except:
-    refs:
-      - master
     variables:
       - $REVIEW_DISABLED
 
@@ -110,7 +150,7 @@ tag_latest:
   <<: *tags
   stage: review
   script:
-    - command destroy
+    - command destroy review
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
@@ -118,8 +158,6 @@ tag_latest:
   only:
     - branches
   except:
-    refs:
-      - master
     variables:
       - $REVIEW_DISABLED
 
@@ -127,7 +165,7 @@ tag_latest:
   <<: *tags
   stage: staging
   script:
-    - command deploy
+    - command deploy staging
   environment:
     name: staging
   artifacts:
@@ -143,7 +181,7 @@ tag_latest:
   <<: *tags
   stage: production
   script:
-    - command deploy
+    - command deploy production
   environment:
     name: production
   artifacts:
@@ -152,20 +190,7 @@ tag_latest:
   when: manual
   allow_failure: false
   only:
-    - master
+    - tags
   except:
     variables:
       - $PRODUCTION_DISABLED
-
-.tag_latest_template:
-  <<: *tags
-  <<: *docker
-  stage: tag_latest
-  allow_failure: false
-  script:
-    - command push
-  only:
-    - master
-  except:
-    variables:
-      - $TAG_LATEST_DISABLED
