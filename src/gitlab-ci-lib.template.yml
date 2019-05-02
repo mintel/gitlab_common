@@ -62,7 +62,7 @@ loadtest:
   stage: 
     build
   script:
-    - command build
+    - command build_image
   only:
     - branches
 
