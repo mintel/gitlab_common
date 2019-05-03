@@ -2,7 +2,7 @@ stages:
   - build
   - test
   - tag-image
-# - pre-deploy
+  - pre-deploy
   - deploy
   - post-deploy
 
@@ -65,6 +65,7 @@ loadtest:
     - command build_image
   only:
     - branches
+    - tags
 
 .container_scan_template:
   <<: *tags
