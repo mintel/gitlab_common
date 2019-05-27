@@ -3,8 +3,6 @@ stages:
   - test
   - tag-image
   - pre-deploy
-  - deploy
-  - post-deploy
 
 build:
   stage: build
@@ -25,26 +23,6 @@ tag-production:
 container-scan:
   stage: test
   extends: .container_scan_template
-
-deploy-review:
-  stage: deploy
-  extends: .review_template
-
-stop-review:
-  stage: deploy
-  extends: .review_stop_template
-
-deploy-staging:
-  stage: deploy
-  extends: .staging_template
-
-deploy-production:
-  stage: deploy
-  extends: .production_template
-
-loadtest:
-  stage: post-deploy
-  extends: .loadtest_template
 
 .common:
   tags_template: &tags
@@ -130,74 +108,3 @@ loadtest:
   except:
     variables:
       - $LOADTEST_DISABLED
-
-.review_template:
-  <<: *tags
-  stage: deploy
-  script:
-    - command deploy review
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    on_stop: stop-review
-  artifacts:
-    paths:
-      - ci-vars/vars.txt
-  when: manual
-  only:
-    - branches
-  except:
-    refs:
-      - master
-    variables:
-      - $REVIEW_DISABLED
-
-.review_stop_template:
-  <<: *tags
-  stage: deploy
-  script:
-    - command destroy review
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    action: stop
-  when: manual
-  only:
-    - branches
-  except:
-    refs:
-      - master
-    variables:
-      - $REVIEW_DISABLED
-
-.staging_template:
-  <<: *tags
-  stage: deploy
-  script:
-    - command deploy staging
-  environment:
-    name: staging
-  artifacts:
-    paths:
-      - ci-vars/vars.txt
-  only:
-    - master
-  except:
-    variables:
-      - $STAGING_DISABLED
-
-.production_template:
-  <<: *tags
-  stage: deploy
-  script:
-    - command deploy production
-  environment:
-    name: production
-  artifacts:
-    paths:
-      - ci-vars/vars.txt
-  when: manual
-  allow_failure: false
-  only:
-    - tags
-  except:
-    variables:
-      - $PRODUCTION_DISABLED
