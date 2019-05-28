@@ -16,9 +16,13 @@ tag-staging:
   stage: tag-image
   extends: .tag_staging_template
 
-tag-production:
+tag-production-branch:
   stage: tag-image
-  extends: .tag_production_template
+  extends: .tag_production_branch_template
+
+tag-production-semver:
+  stage: tag-image
+  extends: .tag_production_semver_template
 
 container-scan:
   stage: test
@@ -85,7 +89,7 @@ container-scan:
     variables:
       - $TAG_STAGING_DISABLED
 
-.tag_production_template:
+.tag_production_branch_template:
   <<: *tags
   <<: *docker
   stage: tag-image
@@ -93,12 +97,24 @@ container-scan:
   script:
     - command publish_image production
   only:
-    refs:
-      - tags
-      - /^production$
+    - production
   except:
     variables:
       - $TAG_PRODUCTION_DISABLED
+
+.tag_production_semver_template:
+  <<: *tags
+  <<: *docker
+  stage: tag-image
+  allow_failure: false
+  script:
+    - command publish_image production
+  only:
+    - tags
+  except:
+    variables:
+      - $TAG_PRODUCTION_DISABLED
+
 
 .loadtest_template:
   <<: *tags
