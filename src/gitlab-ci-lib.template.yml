@@ -94,8 +94,7 @@ container-scan:
     - command publish_image production
   only:
     - tags
-    refs:
-      - production
+    - /^production$
   except:
     variables:
       - $TAG_PRODUCTION_DISABLED
