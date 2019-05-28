@@ -68,6 +68,7 @@ container-scan:
   except:
     refs:
       - master
+      - production
     variables:
       - $TAG_REVIEW_DISABLED
 
@@ -93,6 +94,8 @@ container-scan:
     - command publish_image production
   only:
     - tags
+    refs:
+      - production
   except:
     variables:
       - $TAG_PRODUCTION_DISABLED
