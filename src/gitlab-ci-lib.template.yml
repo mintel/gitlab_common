@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-  - tag-image
+  - publish-image
   - pre-deploy
   - deploy
   - post-deploy
@@ -10,17 +10,17 @@ build:
   stage: build
   extends: .build_template
 
-tag-review:
-  stage: tag-image
-  extends: .tag_review_template
-
 tag-staging:
-  stage: tag-image
+  stage: publish-image
   extends: .tag_staging_template
 
 tag-production:
-  stage: tag-image
+  stage: publish-image
   extends: .tag_production_template
+
+tag-production-branch:
+  stage: publish-image
+  extends: .tag_production_branch_template
 
 container-scan:
   stage: test
@@ -51,7 +51,7 @@ loadtest:
     tags:
       - mintel
   docker_template: &docker
-    services: 
+    services:
       - docker:stable-dind
     variables:
       DOCKER_DRIVER: overlay2
@@ -59,7 +59,7 @@ loadtest:
 .build_template:
   <<: *tags
   <<: *docker
-  stage: 
+  stage:
     build
   script:
     - command build_image
@@ -78,28 +78,13 @@ loadtest:
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
-.tag_review_template:
-  <<: *tags
-  <<: *docker
-  stage: tag-image
-  allow_failure: false
-  script:
-    - command publish_image review
-  only:
-    - branches
-  except:
-    refs:
-      - master
-    variables:
-      - $TAG_REVIEW_DISABLED
-
 .tag_staging_template:
   <<: *tags
   <<: *docker
-  stage: tag-image
+  stage: publish-image
   allow_failure: false
   script:
-    - command publish_image staging
+    - command publish_image
   only:
     - master
   except:
@@ -109,12 +94,25 @@ loadtest:
 .tag_production_template:
   <<: *tags
   <<: *docker
-  stage: tag-image
+  stage: publish-image
   allow_failure: false
   script:
-    - command publish_image production
+    - command publish_image
   only:
     - tags
+  except:
+    variables:
+      - $TAG_PRODUCTION_DISABLED
+
+.tag_production_branch_template:
+  <<: *tags
+  <<: *docker
+  stage: publish-image
+  allow_failure: false
+  script:
+    - command publish_image
+  only:
+    - production
   except:
     variables:
       - $TAG_PRODUCTION_DISABLED
