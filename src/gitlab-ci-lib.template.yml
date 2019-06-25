@@ -92,6 +92,8 @@ loadtest:
   only:
     - branches
   except:
+    refs:
+      - master
     variables:
       - $TAG_REVIEW_DISABLED
 
