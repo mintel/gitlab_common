@@ -10,6 +10,10 @@ build:
   stage: build
   extends: .build_template
 
+tag-review:
+  stage: publish-image
+  extends: .tag_review_template
+
 tag-staging:
   stage: publish-image
   extends: .tag_staging_template
@@ -77,6 +81,19 @@ loadtest:
   except:
     variables:
       - $CONTAINER_SCANNING_DISABLED
+
+.tag_review_template:
+  <<: *tags
+  <<: *docker
+  stage: publish-image
+  allow_failure: false
+  script:
+    - command publish_image
+  only:
+    - branches
+  except:
+    variables:
+      - $TAG_REVIEW_DISABLED
 
 .tag_staging_template:
   <<: *tags
