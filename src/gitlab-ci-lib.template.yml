@@ -94,6 +94,7 @@ loadtest:
   except:
     refs:
       - master
+      - production
     variables:
       - $TAG_REVIEW_DISABLED
 
@@ -143,6 +144,7 @@ loadtest:
     - command loadtest
   only:
     - master
+    - production
     - tags
   except:
     variables:
@@ -165,6 +167,7 @@ loadtest:
   except:
     refs:
       - master
+      - production
     variables:
       - $REVIEW_DISABLED
 
@@ -182,6 +185,7 @@ loadtest:
   except:
     refs:
       - master
+      - production
     variables:
       - $REVIEW_DISABLED
 
@@ -215,6 +219,7 @@ loadtest:
   allow_failure: false
   only:
     - tags
+    - production
   except:
     variables:
       - $PRODUCTION_DISABLED
