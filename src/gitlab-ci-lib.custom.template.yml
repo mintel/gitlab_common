@@ -3,7 +3,7 @@
     tags:
       - mintel
   docker_template: &docker
-    services: 
+    services:
       - docker:stable-dind
     variables:
       DOCKER_DRIVER: overlay2
@@ -11,7 +11,7 @@
 .build_template:
   <<: *tags
   <<: *docker
-  stage: 
+  stage:
     build
   script:
     - command build
@@ -50,7 +50,7 @@
     url: https://$CI_ENVIRONMENT_SLUG-$KUBE_HOST.$KUBE_DOMAIN
     on_stop: review_stop
   artifacts:
-    paths: 
+    paths:
       - ci-vars/vars.txt
   when: manual
   only:
@@ -58,6 +58,7 @@
   except:
     refs:
       - master
+      - production
     variables:
       - $REVIEW_DISABLED
 
@@ -77,6 +78,7 @@
   except:
     refs:
       - master
+      - production
     variables:
       - $REVIEW_DISABLED
 
@@ -106,25 +108,13 @@
     name: production
     url: https://$KUBE_HOST.$KUBE_DOMAIN
   artifacts:
-    paths: 
+    paths:
       - ci-vars/vars.txt
   when: manual
   allow_failure: false
   only:
     - master
+    - production
   except:
     variables:
       - $PRODUCTION_DISABLED
-
-.tag_latest_template:
-  <<: *tags
-  <<: *docker
-  stage: tag_latest
-  allow_failure: false
-  script:
-    - command push
-  only:
-    - master
-  except:
-    variables:
-      - $TAG_LATEST_DISABLED
