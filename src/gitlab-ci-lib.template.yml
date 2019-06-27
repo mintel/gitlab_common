@@ -30,6 +30,10 @@ container-scan:
   stage: test
   extends: .container_scan_template
 
+dockerfile-lint:
+  stage: test
+  extends: .dockerfile_lint_template
+
 deploy-review:
   stage: deploy
   extends: .review_template
@@ -81,6 +85,17 @@ loadtest:
   except:
     variables:
       - $CONTAINER_SCANNING_DISABLED
+
+.dockerfile_lint_template:
+  <<: *tags
+  <<: *docker
+  stage: test
+  allow_failure: true
+  script:
+    - command dockerfile_lint
+  except:
+    variables:
+      - $DOCKERFILE_LINT_DISABLED
 
 .tag_review_template:
   <<: *tags

@@ -29,6 +29,17 @@
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
+.dockerfile_lint_template:
+  <<: *tags
+  <<: *docker
+  stage: test
+  allow_failure: true
+  script:
+    - command dockerfile_lint
+  except:
+    variables:
+      - $DOCKERFILE_LINT_DISABLED
+
 .loadtest_template:
   <<: *tags
   allow_failure: false
