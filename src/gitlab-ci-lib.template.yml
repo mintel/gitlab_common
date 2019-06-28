@@ -30,6 +30,18 @@ container-scan:
   stage: test
   extends: .container_scan_template
 
+app-unit-test:
+  stage: test
+  extends: .app_unit_test_template
+
+app-func-test:
+  stage: test
+  extends: .app_func_test_template
+
+app-lint:
+  stage: test
+  extends: .app_lint_template
+
 dockerfile-lint:
   stage: test
   extends: .dockerfile_lint_template
@@ -85,6 +97,39 @@ loadtest:
   except:
     variables:
       - $CONTAINER_SCANNING_DISABLED
+
+.app_unit_test_template:
+  <<: *tags
+  <<: *docker
+  stage: test
+  allow_failure: false
+  script:
+    - make unit-test
+  except:
+    variables:
+      - $APP_UNIT_TEST_DISABLED
+
+.app_func_test_template:
+  <<: *tags
+  <<: *docker
+  stage: test
+  allow_failure: false
+  script:
+    - make func-test
+  except:
+    variables:
+      - $APP_FUNC_TEST_DISABLED
+
+.app_lint_template:
+  <<: *tags
+  <<: *docker
+  stage: test
+  allow_failure: false
+  script:
+    - make lint
+  except:
+    variables:
+      - $APP_LINT_DISABLED
 
 .dockerfile_lint_template:
   <<: *tags
