@@ -6,6 +6,8 @@ This document follows the conventions laid out in [Keep a CHANGELOG](http://keep
 
 ## [Unreleased]
 
+### Added
+* Dockerfile linting (currently warn-only)
 
 ## [v0.1.0]
 
