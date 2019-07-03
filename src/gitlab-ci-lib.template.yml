@@ -46,6 +46,10 @@ dockerfile-lint:
   stage: test
   extends: .dockerfile_lint_template
 
+k8s-validate:
+  stage: pre-deploy
+  extends: .k8s_validate_template
+
 deploy-review:
   stage: deploy
   extends: .review_template
@@ -197,18 +201,14 @@ loadtest:
     variables:
       - $TAG_PRODUCTION_DISABLED
 
-.loadtest_template:
+.k8s_validate_template:
   <<: *tags
   allow_failure: false
   script:
-    - command loadtest
-  only:
-    - master
-    - production
-    - tags
+    - command k8s_validate
   except:
     variables:
-      - $LOADTEST_DISABLED
+      - $K8S_VALIDATE_DISABLED
 
 .review_template:
   <<: *tags
@@ -283,3 +283,17 @@ loadtest:
   except:
     variables:
       - $PRODUCTION_DISABLED
+
+
+.loadtest_template:
+  <<: *tags
+  allow_failure: false
+  script:
+    - command loadtest
+  only:
+    - master
+    - production
+    - tags
+  except:
+    variables:
+      - $LOADTEST_DISABLED
