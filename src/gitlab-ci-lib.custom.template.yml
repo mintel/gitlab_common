@@ -73,16 +73,14 @@
     variables:
       - $DOCKERFILE_LINT_DISABLED
 
-.loadtest_template:
+.k8s_validate_template:
   <<: *tags
   allow_failure: false
   script:
-    - command loadtest
-  only:
-    - master
+    - command k8s_validate
   except:
     variables:
-      - $LOADTEST_DISABLED
+      - $K8S_VALIDATE_DISABLED
 
 .review_template:
   <<: *tags
@@ -162,3 +160,14 @@
   except:
     variables:
       - $PRODUCTION_DISABLED
+
+.loadtest_template:
+  <<: *tags
+  allow_failure: false
+  script:
+    - command loadtest
+  only:
+    - master
+  except:
+    variables:
+      - $LOADTEST_DISABLED
