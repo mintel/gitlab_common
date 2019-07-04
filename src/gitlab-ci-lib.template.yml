@@ -86,7 +86,7 @@ loadtest:
   stage:
     build
   script:
-    - command build_image
+    - command commands/build_image
   only:
     - branches
     - tags
@@ -97,7 +97,7 @@ loadtest:
   stage: test
   allow_failure: false
   script:
-    - command container_scan
+    - command commands/container_scan
   except:
     variables:
       - $CONTAINER_SCANNING_DISABLED
@@ -141,7 +141,7 @@ loadtest:
   stage: test
   allow_failure: false
   script:
-    - command dockerfile_lint
+    - command commands/dockerfile_lint
   except:
     variables:
       - $DOCKERFILE_LINT_DISABLED
@@ -152,7 +152,7 @@ loadtest:
   stage: publish-image
   allow_failure: false
   script:
-    - command publish_image
+    - command commands/publish_image
   only:
     - branches
   except:
@@ -168,7 +168,7 @@ loadtest:
   stage: publish-image
   allow_failure: false
   script:
-    - command publish_image
+    - command commands/publish_image
   only:
     - master
   except:
@@ -181,7 +181,7 @@ loadtest:
   stage: publish-image
   allow_failure: false
   script:
-    - command publish_image
+    - command commands/publish_image
   only:
     - tags
   except:
@@ -194,7 +194,7 @@ loadtest:
   stage: publish-image
   allow_failure: false
   script:
-    - command publish_image
+    - command commands/publish_image
   only:
     - production
   except:
@@ -205,7 +205,7 @@ loadtest:
   <<: *tags
   allow_failure: false
   script:
-    - command k8s_validate
+    - command commands/k8s_validate
   except:
     variables:
       - $K8S_VALIDATE_DISABLED
@@ -214,7 +214,7 @@ loadtest:
   <<: *tags
   stage: deploy
   script:
-    - command deploy review
+    - command commands/deploy
   environment:
     name: review/$CI_COMMIT_REF_NAME
     on_stop: stop-review
@@ -235,7 +235,7 @@ loadtest:
   <<: *tags
   stage: deploy
   script:
-    - command destroy review
+    - command commands/destroy
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
@@ -253,7 +253,7 @@ loadtest:
   <<: *tags
   stage: deploy
   script:
-    - command deploy staging
+    - command commands/deploy
   environment:
     name: staging
   artifacts:
@@ -269,7 +269,7 @@ loadtest:
   <<: *tags
   stage: deploy
   script:
-    - command deploy production
+    - command commands/deploy
   environment:
     name: production
   artifacts:
@@ -289,7 +289,7 @@ loadtest:
   <<: *tags
   allow_failure: false
   script:
-    - command loadtest
+    - command commands/loadtest
   only:
     - master
     - production

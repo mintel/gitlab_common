@@ -14,7 +14,7 @@
   stage:
     build
   script:
-    - command build
+    - command comands/build
   only:
     - branches
 
@@ -24,7 +24,7 @@
   stage: test
   allow_failure: false
   script:
-    - command container_scan
+    - command comands/container_scan
   except:
     variables:
       - $CONTAINER_SCANNING_DISABLED
@@ -68,7 +68,7 @@
   stage: test
   allow_failure: false
   script:
-    - command dockerfile_lint
+    - command comands/dockerfile_lint
   except:
     variables:
       - $DOCKERFILE_LINT_DISABLED
@@ -77,7 +77,7 @@
   <<: *tags
   allow_failure: false
   script:
-    - command k8s_validate
+    - command comands/k8s_validate
   except:
     variables:
       - $K8S_VALIDATE_DISABLED
@@ -86,7 +86,7 @@
   <<: *tags
   stage: review
   script:
-    - command deploy
+    - command comands/deploy
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://$CI_ENVIRONMENT_SLUG-$KUBE_HOST.$KUBE_DOMAIN
@@ -110,7 +110,7 @@
   variables:
     GIT_STRATEGY: none
   script:
-    - command destroy
+    - command comands/destroy
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
@@ -128,7 +128,7 @@
   <<: *tags
   stage: staging
   script:
-    - command deploy
+    - command comands/deploy
   environment:
     name: staging
     url: https://staging-$KUBE_HOST.$KUBE_DOMAIN
@@ -145,7 +145,7 @@
   <<: *tags
   stage: production
   script:
-    - command deploy
+    - command comands/deploy
   environment:
     name: production
     url: https://$KUBE_HOST.$KUBE_DOMAIN
@@ -165,7 +165,7 @@
   <<: *tags
   allow_failure: false
   script:
-    - command loadtest
+    - command comands/loadtest
   only:
     - master
   except:
