@@ -86,7 +86,7 @@ loadtest:
   stage:
     build
   script:
-    - commands/build_image
+    - ./commands/build_image
   only:
     - branches
     - tags
