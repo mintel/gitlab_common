@@ -86,6 +86,7 @@ loadtest:
   stage:
     build
   script:
+    - pwd
     - ./commands/build_image
   only:
     - branches
