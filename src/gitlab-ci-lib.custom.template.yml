@@ -4,7 +4,8 @@
       - mintel
   docker_template: &docker
     services:
-      - docker:stable-dind
+      - name: docker:stable-dind
+        entrypoint: ["dockerd"]
     variables:
       DOCKER_DRIVER: overlay2
 
