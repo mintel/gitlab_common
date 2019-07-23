@@ -76,10 +76,10 @@ loadtest:
       - mintel
   docker_template: &docker
     services:
-      - name: docker:stable-dind
-        entrypoint: ["dockerd"]
+      - docker:stable-dind
     variables:
       DOCKER_DRIVER: overlay2
+      DOCKER_TLS_CERTDIR: ""
 
 .build_template:
   <<: *tags
