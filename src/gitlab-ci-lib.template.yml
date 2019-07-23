@@ -79,8 +79,8 @@ loadtest:
       - image: docker:stable-dind
         entrypoint:
         - dockerd
-			  - --host=unix:///var/run/docker.sock
-			  - --host=tcp://0.0.0.0:2375
+        - --host=unix:///var/run/docker.sock
+        - --host=tcp://0.0.0.0:2375
     variables:
       DOCKER_DRIVER: overlay2
 
