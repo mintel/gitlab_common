@@ -76,10 +76,13 @@ loadtest:
       - mintel
   docker_template: &docker
     services:
-      - docker:stable-dind
+      - image: docker:stable-dind
+        entrypoint:
+        - dockerd
+			  - --host=unix:///var/run/docker.sock
+			  - --host=tcp://0.0.0.0:2375
     variables:
       DOCKER_DRIVER: overlay2
-      DOCKER_TLS_CERTDIR: ""
 
 .build_template:
   <<: *tags
