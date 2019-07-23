@@ -4,7 +4,7 @@
       - mintel
   docker_template: &docker
     services:
-      - image: docker:stable-dind
+      - name: docker:stable-dind
         entrypoint:
         - dockerd
         - --host=unix:///var/run/docker.sock
