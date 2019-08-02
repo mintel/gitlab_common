@@ -11,6 +11,7 @@
         - --host=tcp://0.0.0.0:2375
     variables:
       DOCKER_DRIVER: overlay2
+      DOCKER_HOST: tcp://docker:2375
 
 .build_template:
   <<: *tags
