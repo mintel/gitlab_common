@@ -1,3 +1,9 @@
+before_script:
+- |
+  if docker info &>/dev/null; then
+    docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  fi
+
 stages:
   - build
   - test
@@ -83,6 +89,7 @@ loadtest:
         - --host=tcp://0.0.0.0:2375
     variables:
       DOCKER_DRIVER: overlay2
+      DOCKER_HOST: tcp://docker:2375
 
 .build_template:
   <<: *tags
@@ -287,7 +294,6 @@ loadtest:
   except:
     variables:
       - $PRODUCTION_DISABLED
-
 
 .loadtest_template:
   <<: *tags
